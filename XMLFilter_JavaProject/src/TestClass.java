@@ -122,8 +122,8 @@ public class TestClass {
 			
 				//	System.out.println("************Create Sheet ************"); 	
 				XSSFSheet filterDataSheet = workbook.createSheet("FilteredData");
-				//	System.out.println("************ Writing Data into Sheet ************");
 
+				
 				int rownum = 0; 
 
 
@@ -137,10 +137,15 @@ public class TestClass {
 					for(int i=0;i< values.length;i++ )
 					{
 						Cell cell = row.createCell(i);
-						cell.setCellValue(values[i]);						
+						cell.setCellValue(values[i]);				
 					}					
 				}
 
+				//Sizing column 	
+				filterDataSheet.autoSizeColumn(0);
+				filterDataSheet.autoSizeColumn(1);
+				filterDataSheet.autoSizeColumn(2);
+				
 				//Writing data into file
 				OutputStream	fileOut = new FileOutputStream(currentFile);			
 				workbook.write(fileOut);

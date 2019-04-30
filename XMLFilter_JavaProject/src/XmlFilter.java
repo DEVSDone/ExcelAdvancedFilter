@@ -110,10 +110,9 @@ public class XmlFilter
 				//	System.out.println("************Create Sheet ************"); 	
 				XSSFSheet filterDataSheet = workbook.createSheet("FilteredData");
 				//	System.out.println("************ Writing Data into Sheet ************");
-
+				
 				int rownum = 0; 
-
-
+				
 				for(Data currData: filterData)
 				{					
 					String values[]=new String[3];
@@ -127,12 +126,17 @@ public class XmlFilter
 						cell.setCellValue(values[i]);						
 					}					
 				}
-
+				
+				//Sizing column 	
+				filterDataSheet.autoSizeColumn(0);
+				filterDataSheet.autoSizeColumn(1);
+				filterDataSheet.autoSizeColumn(2);
+				
 				//Writing data into file
 				OutputStream	fileOut = new FileOutputStream(currentFile);			
 				workbook.write(fileOut);
 				System.out.println("************ Data Filter successfully ************"); 
-
+								
 				fileOut.close();
 
 			} catch (FileNotFoundException e) 
