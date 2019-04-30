@@ -74,7 +74,7 @@ public class XmlFilter
 					//Checking Duplicate 
 					if(setTORemoveDuplicate.contains(matnumber))
 					{
-						flag=false;
+						flag=false;    //for not add duplicate 
 					}
 
 					//Checking data which wnat to exclude
