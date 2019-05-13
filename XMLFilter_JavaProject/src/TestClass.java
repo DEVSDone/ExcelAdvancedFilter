@@ -55,6 +55,9 @@ public class TestClass {
 	{
 		for(String fname:fileNames)
 		{
+			String serialNum[] = fname.split("-");
+			String srNum = serialNum[0];
+			
 			String currentFile =folderPath+"/"+fname;
 			System.out.println(" File Process :"+currentFile);
 			List <Data> filterData = new LinkedList<Data>();
@@ -109,7 +112,7 @@ public class TestClass {
 						{	
 							if( currentCellValue.contains(includeNames[i]) && (!setTORemoveDuplicate.contains(matnumber)) )
 							{								
-								filterData.add(new Data(matnumber,currentCellValue,String.valueOf(row.getCell(7).getNumericCellValue()) ) );
+								filterData.add(new Data(srNum,matnumber,currentCellValue,String.valueOf(row.getCell(7).getNumericCellValue()) ) );
 								setTORemoveDuplicate.add(matnumber);
 							}
 						}

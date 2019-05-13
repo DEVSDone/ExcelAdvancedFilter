@@ -28,29 +28,32 @@ public class XmlFilter
 	//List of exclude names 
 	static String excludeNames[]= {"KIT","Kit","kit","MTG","Mtg","mtg","M/Steel","BRKT","MOTOR","PIP","Pip","pip"};
 
+	static List <Data> filterData = new LinkedList<Data>();
 	
 	public static void main(String[] args) 
 	{
-
 		ArrayList<String> fileNames =getAllFilesFromFolder(folderPath);
 		FilterXmlFiles(fileNames);
-
 	}
 
 	private static void FilterXmlFiles(ArrayList<String> fileNames)
 	{
+		int proFiles =1;
 		for(String fname:fileNames)
 		{
+			String serialNum[] = fname.split("-");
+			String srNum = serialNum[0];
+			
 			String currentFile =folderPath+"/"+fname;
-			System.out.println(" File Filtering : "+currentFile);
-			List <Data> filterData = new LinkedList<Data>();
+			System.out.println(" File Filtering : "+proFiles+" :: "+currentFile);
+
 			//HashSet<Data> filterData =new HashSet<Data>();
 			HashSet <String> setTORemoveDuplicate =new HashSet<String>();
 			FileInputStream file;
 			try
 			{
 				//To read data from excelsheet
-				file = new FileInputStream(new File(currentFile)); 
+				file = new FileInputStream(new File(currentFile)); 				
 				//Create Workbook instance holding reference to .xlsx file
 				@SuppressWarnings("resource")
 				XSSFWorkbook workbook = new XSSFWorkbook(file);
@@ -63,9 +66,8 @@ public class XmlFilter
 				{
 					Row row = rowIterator.next();
 					//For each row, iterate through Particular Column
-					Cell cell =row.getCell(4);
 
-					String currentCellValue =cell.getStringCellValue(); //Getting Description
+					String currentCellValue =row.getCell(4).getStringCellValue(); //Getting Description
 					String matnumber = row.getCell(3).getStringCellValue();
 
 					//System.out.println("--------#########################--------");
@@ -94,7 +96,7 @@ public class XmlFilter
 						{	
 							if( currentCellValue.contains(includeNames[i]) && (!setTORemoveDuplicate.contains(matnumber)) )
 							{								
-								filterData.add(new Data(matnumber,currentCellValue,String.valueOf(row.getCell(6).getNumericCellValue()) ) );
+								filterData.add(new Data(srNum,matnumber,currentCellValue,String.valueOf(row.getCell(7).getNumericCellValue()) ) );
 								setTORemoveDuplicate.add(matnumber);
 							}
 						}
@@ -104,49 +106,60 @@ public class XmlFilter
 				//Closing FileInputStream 
 				file.close();
 				
-				//Sorting filter data A-Z
-				Collections.sort(filterData);
-			
-				//	System.out.println("************Create Sheet ************"); 	
-				XSSFSheet filterDataSheet = workbook.createSheet("FilteredData");
-				//	System.out.println("************ Writing Data into Sheet ************");
-				
-				int rownum = 0; 
-				
-				for(Data currData: filterData)
-				{					
-					String values[]=new String[3];
-					values[0] =currData.getMaterialNumber();
-					values[1] =currData.getDescription();
-					values[2] =currData.getQuantity();	
-					Row row = filterDataSheet.createRow(rownum++);
-					for(int i=0;i< values.length;i++ )
-					{
-						Cell cell = row.createCell(i);
-						cell.setCellValue(values[i]);						
-					}					
-				}
-				
-				//Sizing column 	
-				filterDataSheet.autoSizeColumn(0);
-				filterDataSheet.autoSizeColumn(1);
-				filterDataSheet.autoSizeColumn(2);
-				
-				//Writing data into file
-				OutputStream	fileOut = new FileOutputStream(currentFile);			
-				workbook.write(fileOut);
-				System.out.println("************ Data Filter successfully ************"); 
-								
-				fileOut.close();
-
-			} catch (FileNotFoundException e) 
+						} catch (FileNotFoundException e) 
 			{			
 				e.printStackTrace();
 			} catch (IOException e) 
 			{
 				e.printStackTrace();
 			}		 		
+			proFiles++;
+		}
+		
+		try 
+		{
+		//Sorting filter data A-Z
+		Collections.sort(filterData);
+		 // Blank workbook 
+		 @SuppressWarnings("resource")
+		XSSFWorkbook workbook1 = new XSSFWorkbook(); 
+		//	System.out.println("************Create Sheet ************"); 	
+		XSSFSheet filterDataSheet = workbook1.createSheet("FilteredAndFormatted_Data");
+		//	System.out.println("************ Writing Data into Sheet ************");
+		
+		int rownum = 0; 
+		
+		for(Data currData: filterData)
+		{					
+			String values[]=new String[4];
+			values[0] =currData.getSerialNumber();
+			values[1] =currData.getMaterialNumber();
+			values[2] =currData.getDescription();
+			values[3] =currData.getQuantity();	
+			Row row = filterDataSheet.createRow(rownum++);
+			for(int i=0;i< values.length;i++ )
+			{
+				Cell cell = row.createCell(i);
+				cell.setCellValue(values[i]);						
+			}					
+		}
+		
+		//Sizing column 	
+		filterDataSheet.autoSizeColumn(0);
+		filterDataSheet.autoSizeColumn(1);
+		filterDataSheet.autoSizeColumn(2);
+		filterDataSheet.autoSizeColumn(3);
+		
+		//Writing data into file
+		OutputStream	fileOut = new FileOutputStream(new File(folderPath+"/FilterAndFormattedExcel.xlsx"));			
+		workbook1.write(fileOut);
+		System.out.println("************ Data Filter and Formatted successfully ************"); 
+						
+		fileOut.close();
 
+		}catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 
 
