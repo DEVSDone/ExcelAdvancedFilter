@@ -20,7 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class XmlFilter 
 {
-	//Folder Path where all XMl files present.
+	//Folder Path where all Excel files present.
 	static String folderPath="D:/JCI project/FilterFilesForJCI";
 	//Names which you want to filter from ExcelSheet
 	static String includeNames[]= {"valve","Valve","VALVE","Gasket","GASKET","gasket","strainer","Strainer","STRAINER","COUPLING","coupling","Coupling",
@@ -67,8 +67,8 @@ public class XmlFilter
 					Row row = rowIterator.next();
 					//For each row, iterate through Particular Column
 
-					String currentCellValue =row.getCell(4).getStringCellValue(); //Getting Description
-					String matnumber = row.getCell(3).getStringCellValue();
+					String currentCellValue =row.getCell(5).getStringCellValue(); //Getting Description
+					String matnumber = row.getCell(4).getStringCellValue();
 
 					//System.out.println("--------#########################--------");
 					flag=true;
@@ -96,7 +96,7 @@ public class XmlFilter
 						{	
 							if( currentCellValue.contains(includeNames[i]) && (!setTORemoveDuplicate.contains(matnumber)) )
 							{								
-								filterData.add(new Data(srNum,matnumber,currentCellValue,String.valueOf(row.getCell(7).getNumericCellValue()) ) );
+								filterData.add(new Data(srNum,matnumber,currentCellValue,String.valueOf(row.getCell(8).getNumericCellValue()) ) );
 								setTORemoveDuplicate.add(matnumber);
 							}
 						}
@@ -120,6 +120,7 @@ public class XmlFilter
 		{
 		//Sorting filter data A-Z
 		Collections.sort(filterData);
+		System.out.println("TOtal Rows :"+filterData.size());
 		 // Blank workbook 
 		 @SuppressWarnings("resource")
 		XSSFWorkbook workbook1 = new XSSFWorkbook(); 
